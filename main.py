@@ -1,4 +1,3 @@
-from engine.game import Game
+from game import pygengine
 
-game = Game()
-game.run()
+pygengine.start_game()
