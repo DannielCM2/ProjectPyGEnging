@@ -15,23 +15,25 @@ class Game:
 
         self.window = Window()
         self.renderer = Renderer(self.window.ctx)
-        self.scene_manager = SceneManager(self)
         self.input = Input()
+        self.scene_manager = SceneManager(self)
 
     def run(self):
         self.last_time = time.perf_counter()
 
         while self.running:
+            if self.window.should_close():
+                self.running = False
+
             frame_start = time.perf_counter()
 
             delta_time = frame_start - self.last_time
             self.last_time = frame_start
             
             self.window.poll_events()
-            if self.window.should_close():
-                self.running = False
-
-            self.renderer.render(self.scene_manager.current_scene)
+            self.handle_input()
+            self.update(delta_time)
+            self.renderer.render(self.scene_manager.scene_stack[-1])
             self.window.swap_buffers()
 
             frame_time = time.perf_counter() - frame_start
@@ -41,3 +43,12 @@ class Game:
                 time.sleep(sleep_time)
         
         self.window.destroy()
+
+    def handle_input(self):
+        pressed_keys = self.window.get_pressed_keys()
+        self.input.update(pressed_keys)
+
+    def update(self, delta_time):
+        if self.scene_manager.scene_stack:
+            current_scene = self.scene_manager.scene_stack[-1]
+            current_scene.update(delta_time)
