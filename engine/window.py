@@ -39,6 +39,15 @@ class Window:
     def poll_events(self):
         glfw.poll_events()
 
+    def get_pressed_keys(self):
+        pressed = set()
+
+        for key in range(32, 348):
+            if glfw.get_key(self.window, key) == glfw.PRESS:
+                pressed.add(key)
+
+        return pressed
+
     def swap_buffers(self):
         glfw.swap_buffers(self.window)
 
